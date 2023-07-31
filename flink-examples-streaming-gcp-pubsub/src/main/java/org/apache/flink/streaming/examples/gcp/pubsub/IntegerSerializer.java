@@ -17,21 +17,23 @@
 
 package org.apache.flink.streaming.examples.gcp.pubsub;
 
-import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.streaming.connectors.gcp.pubsub.common.PubSubDeserializationSchema;
 
 import com.google.pubsub.v1.PubsubMessage;
+import org.apache.flink.streaming.connectors.gcp.pubsub.common.PubSubDeserializationSchema;
+import org.apache.flink.streaming.connectors.gcp.pubsub.common.PubSubSerializationSchema;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Deserialization schema to deserialize messages produced by {@link PubSubPublisher}. The byte[]
  * received by this schema must contain a single Integer.
  */
 class IntegerSerializer
-        implements PubSubDeserializationSchema<Integer>, SerializationSchema<Integer> {
+        implements PubSubDeserializationSchema<Integer>, PubSubSerializationSchema<Integer> {
 
     @Override
     public Integer deserialize(PubsubMessage message) throws IOException {
@@ -51,5 +53,14 @@ class IntegerSerializer
     @Override
     public byte[] serialize(Integer integer) {
         return BigInteger.valueOf(integer).toByteArray();
+    }
+
+    @Override
+    public Map<String, String> getAttributesMap(Integer element) {
+        return new HashMap<String, String>() {
+            {
+                put("value", element.toString());
+            }
+        };
     }
 }

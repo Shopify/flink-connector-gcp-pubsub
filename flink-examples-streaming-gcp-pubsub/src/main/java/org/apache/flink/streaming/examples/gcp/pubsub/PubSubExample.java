@@ -75,7 +75,8 @@ public class PubSubExample {
                 .disableChaining()
                 .addSink(
                         PubSubSink.newBuilder()
-                                .withSerializationSchema(new IntegerSerializer())
+                                .withSerializationSchema(new IntegerSerializer() {
+                                })
                                 .withProjectName(projectName)
                                 .withTopicName(outputTopicName)
                                 .build());
